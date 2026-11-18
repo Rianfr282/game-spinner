@@ -24,6 +24,12 @@ body {
   text-align: center;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  /* Stop double-tap zoom and text selection; pinch zoom still works. */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 body.mode-auto,

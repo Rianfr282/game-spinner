@@ -810,18 +810,29 @@ function removePicked(item) {
 
 function openModal(item, colorIndex, note) {
   const index = typeof colorIndex === "number" ? colorIndex : activeIds.indexOf(item.id);
+  // "Spin again" only makes sense in Random mode.
+  const showAgain = mode === "auto";
   modalWord.textContent = item.label;
   modalIconUse.setAttribute("href", "#icon-" + item.id);
   modalArt.style.background = colorFor(index < 0 ? 0 : index);
   modalRemaining.textContent = note || "";
+  againBtn.hidden = !showAgain;
+  closeBtn.classList.toggle("spin-btn--small", !showAgain);
+  closeBtn.classList.toggle("link-btn", showAgain);
   modal.hidden = false;
-  againBtn.focus();
+  (showAgain ? againBtn : closeBtn).focus();
 }
 
 function closeModal(returnFocus) {
   if (modal.hidden) return;
   modal.hidden = true;
-  if (returnFocus) spinBtn.focus();
+  if (!returnFocus) return;
+  // Return focus to whatever opened the popup.
+  if (mode === "learn") {
+    menuBtn.focus();
+  } else {
+    spinBtn.focus();
+  }
 }
 
 function spinAgain() {
@@ -1176,6 +1187,20 @@ if (!("speechSynthesis" in window)) {
 }
 
 /* ============ EVENTS ============ */
+// Block the browser's double-tap zoom on touch screens (pinch zoom is kept).
+document.addEventListener("dblclick", (event) => {
+  event.preventDefault();
+}, { passive: false });
+
+let lastTouchEnd = 0;
+document.addEventListener("touchend", (event) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 320) {
+    event.preventDefault();
+  }
+  lastTouchEnd = now;
+}, { passive: false });
+
 spinBtn.addEventListener("click", spin);
 againBtn.addEventListener("click", spinAgain);
 closeBtn.addEventListener("click", () => closeModal(true));
