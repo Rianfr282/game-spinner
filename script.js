@@ -601,6 +601,71 @@ function rotateLabelWheel(direction) {
   applyLabelRotation(false);
 }
 
+/* ============ SWIPE / DRAG THE WHEEL (Listen & Find) ============ */
+// Students can turn the Listen wheel by dragging/touching it on phones and
+// tablets. The wheel snaps to the nearest position when the finger lifts.
+const wheelSvg = document.querySelector(".wheel-svg");
+let dragPointerId = null;
+let dragStartAngle = 0;
+let dragStartRotation = 0;
+let dragMoved = false;
+
+function wheelCenterOnScreen() {
+  const rect = wheelSvg.getBoundingClientRect();
+  return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+}
+
+function angleToPoint(clientX, clientY) {
+  const center = wheelCenterOnScreen();
+  return (Math.atan2(clientY - center.y, clientX - center.x) * 180) / Math.PI;
+}
+
+function beginWheelDrag(event) {
+  if (mode !== "listen" || dragPointerId !== null) return;
+  dragPointerId = event.pointerId;
+  dragStartAngle = angleToPoint(event.clientX, event.clientY);
+  dragStartRotation = manualRotation;
+  dragMoved = false;
+  wheelSvg.setPointerCapture(event.pointerId);
+  wheelSvg.style.transition = "none";
+}
+
+function moveWheelDrag(event) {
+  if (dragPointerId !== event.pointerId) return;
+  const angle = angleToPoint(event.clientX, event.clientY);
+  const delta = angle - dragStartAngle;
+  if (Math.abs(delta) > 3) dragMoved = true;
+  manualRotation = dragStartRotation + delta;
+  setRotation(wheel, manualRotation, false);
+}
+
+function endWheelDrag(event) {
+  if (dragPointerId !== event.pointerId) return;
+  try {
+    wheelSvg.releasePointerCapture(event.pointerId);
+  } catch (e) {
+    // Pointer may already be released by the browser.
+  }
+  dragPointerId = null;
+  wheelSvg.style.transition = "transform 260ms ease";
+
+  // Snap to the closest wedge so a picture always sits under the pointer.
+  const n = Math.max(2, getActiveItems().length);
+  const step = 360 / n;
+  manualRotation = Math.round(manualRotation / step) * step;
+  setRotation(wheel, manualRotation, false);
+}
+
+wheelSvg.addEventListener("pointerdown", beginWheelDrag);
+wheelSvg.addEventListener("pointermove", moveWheelDrag);
+wheelSvg.addEventListener("pointerup", endWheelDrag);
+wheelSvg.addEventListener("pointercancel", endWheelDrag);
+
+// Prevent browser panning while dragging the wheel in Listen mode.
+wheelSvg.addEventListener("touchmove", (event) => {
+  if (mode === "listen" && dragPointerId !== null) event.preventDefault();
+}, { passive: false });
+
 const MODES = ["learn", "listen", "game", "auto"];
 
 const SUBTITLES = {

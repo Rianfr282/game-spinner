@@ -224,6 +224,12 @@ body.mode-game #spin-btn {
   display: none;
 }
 
+/* Students can drag the Listen wheel with a finger. */
+body.mode-listen .wheel-svg {
+  touch-action: none;
+  cursor: grab;
+}
+
 body.mode-game #manual-labels,
 body.mode-game #manual-inner,
 body.mode-game #manual-hub {
