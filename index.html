@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Things in the Classroom</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="mode-learn">
+  <h1>Things in the Classroom</h1>
+  <p class="subtitle" id="subtitle">Spin the wheel and say the word!</p>
+
+  <div class="topbar">
+    <button id="menu-btn" class="menu-btn" type="button" aria-label="Menu" aria-haspopup="true" aria-expanded="false" aria-controls="menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round">
+        <path d="M4 7h16"></path>
+        <path d="M4 12h16"></path>
+        <path d="M4 17h16"></path>
+      </svg>
+    </button>
+
+    <div id="menu" class="menu" role="menu" aria-labelledby="menu-btn" hidden>
+      <p class="menu-title">Menu</p>
+      <button class="menu-item" type="button" role="menuitem" data-mode="learn">
+        <span>Learn Objects</span>
+      </button>
+      <button class="menu-item" type="button" role="menuitem" data-mode="listen">
+        <span>Listen &amp; Find</span>
+      </button>
+      <button class="menu-item" type="button" role="menuitem" data-mode="game">
+        <span>Guess Mode</span>
+      </button>
+      <button class="menu-item" type="button" role="menuitem" data-mode="auto">
+        <span>Random Mode</span>
+      </button>
+      <button class="menu-item" type="button" role="menuitem" id="menu-edit">
+        <span>Edit Spinner</span>
+      </button>
+    </div>
+  </div>
+
+  <main class="stage">
+    <svg class="wheel-svg" viewBox="0 0 600 600" role="img" aria-label="Classroom objects spinner wheel">
+      <circle class="frame" cx="300" cy="300" r="296" fill="#FFFFFF" stroke="#2D2D2D" stroke-opacity="0.25" stroke-width="2"></circle>
+      <g id="wheel"></g>
+      <g id="manual-inner"></g>
+      <g id="manual-labels"></g>
+      <g id="manual-hub"></g>
+      <polygon class="pointer" points="270,0 330,0 300,44" fill="#E8505B" stroke="#fff" stroke-width="4" stroke-linejoin="round"></polygon>
+    </svg>
+    <div id="controls" class="controls-col">
+      <div id="name-controls" class="control-group" hidden>
+        <span class="control-label">Word</span>
+        <button id="name-up" class="manual-btn" type="button" aria-label="Turn words up">
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 14l7-7 7 7"></path>
+          </svg>
+        </button>
+        <button id="name-down" class="manual-btn" type="button" aria-label="Turn words down">
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 10l7 7 7-7"></path>
+          </svg>
+        </button>
+      </div>
+      <div id="image-controls" class="control-group">
+        <span class="control-label">Picture</span>
+        <button id="manual-up" class="manual-btn" type="button" aria-label="Turn pictures up">
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 14l7-7 7 7"></path>
+          </svg>
+        </button>
+        <button id="manual-down" class="manual-btn" type="button" aria-label="Turn pictures down">
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 10l7 7 7-7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <button id="spin-btn" class="spin-btn" type="button">SPIN</button>
+  <button id="check-btn" class="spin-btn" type="button">CHECK</button>
+
+  <div id="listen-bar" class="listen-bar" hidden>
+    <button id="listen-replay" class="listen-speak" type="button" aria-label="Hear the word again">
+      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="4,9 8,9 13,5 13,19 8,15 4,15" fill="#2D2D2D"></polygon>
+        <path d="M16.5 8.5a5 5 0 0 1 0 7"></path>
+        <path d="M19 6a8.5 8.5 0 0 1 0 12"></path>
+      </svg>
+    </button>
+    <p class="listen-word" id="listen-word"></p>
+    <button id="listen-next" class="listen-next" type="button">Next word</button>
+  </div>
+
+  <section id="gallery" class="gallery" hidden>
+    <p class="gallery-hint">Tap a picture to see its name and hear it.</p>
+    <div id="gallery-grid" class="gallery-grid"></div>
+  </section>
+
+  <button id="edit-btn" class="edit-btn" type="button" aria-label="Edit spinner" title="Edit spinner" hidden>
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 20h4L20 8a2.8 2.8 0 0 0-4-4L4 16v4z"></path>
+      <path d="M13.5 6.5l4 4"></path>
+    </svg>
+  </button>
+
+  <div id="editor" class="modal-overlay" hidden>
+    <div class="editor-card" role="dialog" aria-modal="true" aria-labelledby="editor-title">
+      <div class="editor-head">
+        <h2 id="editor-title">Edit Spinner</h2>
+        <button id="editor-close" class="icon-btn" type="button" aria-label="Close editor">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round">
+            <path d="M6 6l12 12M18 6L6 18"></path>
+          </svg>
+        </button>
+      </div>
+      <p class="editor-hint">Remove objects from the spinner, then pick another object to add. Objects picked by a spin are removed automatically. Keep 2 to 14 objects.</p>
+
+      <section class="editor-section">
+        <h3>On the spinner (<span id="active-count">8</span>)</h3>
+        <div id="active-list" class="active-list"></div>
+      </section>
+
+      <section class="editor-section">
+        <h3>Add objects</h3>
+        <div id="library-list" class="library-grid"></div>
+      </section>
+
+      <div class="editor-foot">
+        <span id="editor-status" class="editor-status" role="status"></span>
+        <button id="reset-btn" class="link-btn" type="button">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="feedback" class="modal-overlay" hidden>
+    <div class="feedback-card" id="feedback-card" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
+      <div class="feedback-badge" id="feedback-badge"></div>
+      <p class="feedback-title" id="feedback-title"></p>
+      <p class="feedback-note" id="feedback-note"></p>
+      <button id="feedback-close" class="spin-btn spin-btn--small" type="button">Close</button>
+    </div>
+  </div>
+
+  <div id="modal" class="modal-overlay" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-word">
+      <div class="modal-art" id="modal-art">
+        <svg id="modal-icon" width="140" height="140" aria-hidden="true"><use href="#icon-book"></use></svg>
+      </div>
+      <p class="modal-word" id="modal-word">book</p>
+      <p class="modal-remaining" id="modal-remaining"></p>
+      <button id="speak-btn" class="speak-btn" type="button" aria-label="Hear the word">
+        <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2D2D2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="4,9 8,9 13,5 13,19 8,15 4,15" fill="#2D2D2D"></polygon>
+          <path d="M16.5 8.5a5 5 0 0 1 0 7"></path>
+          <path d="M19 6a8.5 8.5 0 0 1 0 12"></path>
+        </svg>
+      </button>
+      <button id="again-btn" class="spin-btn spin-btn--small" type="button">Spin again</button>
+      <button id="close-btn" class="link-btn" type="button">Close</button>
+    </div>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="icon-book" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="14" y="10" width="36" height="44" rx="4" fill="#E85D75"></rect>
+        <rect x="14" y="10" width="9" height="44" rx="4" fill="#C2405A"></rect>
+        <line x1="29" y1="22" x2="44" y2="22" stroke="#fff" stroke-width="3"></line>
+        <line x1="29" y1="30" x2="44" y2="30" stroke="#fff" stroke-width="3"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-eraser" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" transform="rotate(-30 32 32)">
+        <rect x="8" y="22" width="48" height="20" rx="5" fill="#FFFFFF"></rect>
+        <rect x="36" y="22" width="20" height="20" rx="5" fill="#F7A8C4"></rect>
+        <line x1="36" y1="22" x2="36" y2="42"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-pen" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" transform="rotate(45 32 32)">
+        <rect x="26" y="6" width="12" height="38" rx="3" fill="#FF6B9D"></rect>
+        <rect x="29" y="10" width="3" height="16" rx="1.5" fill="#fff" stroke="none"></rect>
+        <polygon points="26,44 38,44 32,58" fill="#F5E6C8"></polygon>
+        <polygon points="30,53 34,53 32,58" fill="#333"></polygon>
+        <rect x="39" y="8" width="3" height="18" rx="1.5" fill="#E0457F"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-pencilcase" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="16" y="10" width="6" height="14" fill="#F9DC5C"></rect>
+        <rect x="26" y="8" width="6" height="16" fill="#E85D75"></rect>
+        <rect x="36" y="11" width="6" height="13" fill="#52C9A0"></rect>
+        <rect x="8" y="22" width="48" height="26" rx="8" fill="#6FA8DC"></rect>
+        <line x1="12" y1="32" x2="52" y2="32" stroke="#fff" stroke-width="2.5" stroke-dasharray="3 3"></line>
+        <circle cx="46" cy="32" r="3.5" fill="#fff"></circle>
+      </g>
+    </symbol>
+
+    <symbol id="icon-notebook" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="14" y="8" width="36" height="48" rx="3" fill="#FFF8E1"></rect>
+        <circle cx="14" cy="16" r="2.8" fill="#8A8A8A"></circle>
+        <circle cx="14" cy="26" r="2.8" fill="#8A8A8A"></circle>
+        <circle cx="14" cy="36" r="2.8" fill="#8A8A8A"></circle>
+        <circle cx="14" cy="46" r="2.8" fill="#8A8A8A"></circle>
+        <line x1="22" y1="20" x2="44" y2="20" stroke="#9AB7D3" stroke-width="2"></line>
+        <line x1="22" y1="28" x2="44" y2="28" stroke="#9AB7D3" stroke-width="2"></line>
+        <line x1="22" y1="36" x2="44" y2="36" stroke="#9AB7D3" stroke-width="2"></line>
+        <line x1="22" y1="44" x2="44" y2="44" stroke="#9AB7D3" stroke-width="2"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-bag" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M25 18 Q32 4 39 18" fill="none"></path>
+        <rect x="13" y="16" width="38" height="40" rx="11" fill="#7C6FF0"></rect>
+        <rect x="19" y="36" width="26" height="15" rx="5" fill="#5B4FD6"></rect>
+        <line x1="23" y1="40" x2="41" y2="40" stroke="#fff" stroke-width="2.5"></line>
+        <line x1="13" y1="28" x2="51" y2="28"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-ruler" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" transform="rotate(-35 32 32)">
+        <rect x="3" y="22" width="58" height="20" rx="2" fill="#F9DC5C"></rect>
+        <line x1="9" y1="22" x2="9" y2="32" stroke-width="2"></line>
+        <line x1="15" y1="22" x2="15" y2="28" stroke-width="2"></line>
+        <line x1="21" y1="22" x2="21" y2="32" stroke-width="2"></line>
+        <line x1="27" y1="22" x2="27" y2="28" stroke-width="2"></line>
+        <line x1="33" y1="22" x2="33" y2="32" stroke-width="2"></line>
+        <line x1="39" y1="22" x2="39" y2="28" stroke-width="2"></line>
+        <line x1="45" y1="22" x2="45" y2="32" stroke-width="2"></line>
+        <line x1="51" y1="22" x2="51" y2="28" stroke-width="2"></line>
+        <line x1="57" y1="22" x2="57" y2="32" stroke-width="2"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-pencil" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" transform="rotate(45 32 32)">
+        <rect x="26" y="2" width="12" height="6" rx="3" fill="#F7A8C4"></rect>
+        <rect x="26" y="8" width="12" height="5" fill="#B8B8B8"></rect>
+        <rect x="26" y="13" width="12" height="28" fill="#F9C846"></rect>
+        <line x1="32" y1="13" x2="32" y2="41" stroke="#E0A800" stroke-width="2"></line>
+        <polygon points="26,41 38,41 32,57" fill="#F5D7B0"></polygon>
+        <polygon points="30,53 34,53 32,57" fill="#333"></polygon>
+      </g>
+    </symbol>
+
+    <symbol id="icon-chair" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="18" y="8" width="28" height="26" rx="4" fill="#8E9BF0"></rect>
+        <rect x="13" y="32" width="38" height="8" rx="3" fill="#6BB8F0"></rect>
+        <line x1="18" y1="40" x2="18" y2="54"></line>
+        <line x1="46" y1="40" x2="46" y2="54"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-desk" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="6" y="20" width="52" height="8" rx="3" fill="#F8B26A"></rect>
+        <rect x="12" y="28" width="7" height="26" fill="#C98A4B"></rect>
+        <rect x="45" y="28" width="7" height="26" fill="#C98A4B"></rect>
+        <rect x="24" y="28" width="16" height="10" rx="1" fill="#E0A800"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-whiteboard" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="6" y="10" width="52" height="36" rx="3" fill="#FFFFFF"></rect>
+        <rect x="4" y="46" width="56" height="6" rx="3" fill="#BDBDBD"></rect>
+        <line x1="14" y1="22" x2="34" y2="22" stroke="#6BB8F0" stroke-width="3"></line>
+        <line x1="14" y1="30" x2="44" y2="30" stroke="#6BB8F0" stroke-width="3"></line>
+        <line x1="14" y1="38" x2="28" y2="38" stroke="#B5E48C" stroke-width="3"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-clock" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <circle cx="32" cy="32" r="24" fill="#FFFFFF"></circle>
+        <line x1="32" y1="32" x2="32" y2="18" stroke-width="3"></line>
+        <line x1="32" y1="32" x2="41" y2="37" stroke-width="2.5"></line>
+        <circle cx="32" cy="32" r="2.2" fill="#3B3B3B" stroke="none"></circle>
+        <line x1="32" y1="12" x2="32" y2="15" stroke-width="2"></line>
+        <line x1="32" y1="49" x2="32" y2="52" stroke-width="2"></line>
+        <line x1="12" y1="32" x2="15" y2="32" stroke-width="2"></line>
+        <line x1="49" y1="32" x2="52" y2="32" stroke-width="2"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-door" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="16" y="6" width="32" height="52" rx="3" fill="#C98A4B"></rect>
+        <rect x="22" y="12" width="20" height="16" rx="2" fill="#E0A800"></rect>
+        <circle cx="42" cy="34" r="2.5" fill="#3B3B3B" stroke="none"></circle>
+      </g>
+    </symbol>
+
+    <symbol id="icon-window" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="10" y="10" width="44" height="42" rx="3" fill="#BFE6FF"></rect>
+        <line x1="32" y1="10" x2="32" y2="52"></line>
+        <line x1="10" y1="31" x2="54" y2="31"></line>
+        <rect x="5" y="52" width="54" height="5" rx="2" fill="#BDBDBD"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-globe" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <circle cx="32" cy="30" r="18" fill="#6BB8F0"></circle>
+        <path d="M21 22 Q29 16 36 23 Q32 30 25 28 Z" fill="#B5E48C" stroke="none"></path>
+        <path d="M37 32 Q44 30 43 38 Q37 40 35 35 Z" fill="#B5E48C" stroke="none"></path>
+        <line x1="32" y1="48" x2="32" y2="54"></line>
+        <rect x="22" y="54" width="20" height="4" rx="2" fill="#BDBDBD"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-map" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="8" y="12" width="48" height="40" rx="2" fill="#FFF8E1"></rect>
+        <path d="M8 26 L24 20 L40 28 L56 22" fill="none" stroke="#B5E48C" stroke-width="3"></path>
+        <path d="M8 40 L24 34 L40 42 L56 36" fill="none" stroke="#6BB8F0" stroke-width="3"></path>
+      </g>
+    </symbol>
+
+    <symbol id="icon-crayons" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="12" y="20" width="8" height="32" fill="#E85D75"></rect>
+        <polygon points="12,20 20,20 16,10" fill="#E85D75"></polygon>
+        <rect x="28" y="16" width="8" height="36" fill="#F9DC5C"></rect>
+        <polygon points="28,16 36,16 32,6" fill="#F9DC5C"></polygon>
+        <rect x="44" y="22" width="8" height="30" fill="#52C9A0"></rect>
+        <polygon points="44,22 52,22 48,12" fill="#52C9A0"></polygon>
+      </g>
+    </symbol>
+
+    <symbol id="icon-paintbrush" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="28" y="4" width="8" height="28" rx="3" fill="#C98A4B"></rect>
+        <rect x="26" y="32" width="12" height="8" rx="1" fill="#B8B8B8"></rect>
+        <path d="M26 40 Q26 58 32 60 Q38 58 38 40 Z" fill="#8E9BF0"></path>
+      </g>
+    </symbol>
+
+    <symbol id="icon-scissors" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <line x1="18" y1="14" x2="40" y2="42"></line>
+        <line x1="46" y1="14" x2="24" y2="42"></line>
+        <circle cx="19" cy="48" r="7" fill="none"></circle>
+        <circle cx="45" cy="48" r="7" fill="none"></circle>
+      </g>
+    </symbol>
+
+    <symbol id="icon-glue" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="22" y="20" width="20" height="34" rx="5" fill="#F9DC5C"></rect>
+        <rect x="26" y="12" width="12" height="8" rx="2" fill="#E8505B"></rect>
+        <rect x="29" y="5" width="6" height="7" rx="2" fill="#FF6B9D"></rect>
+        <rect x="26" y="30" width="12" height="12" rx="2" fill="#FFFFFF"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-sharpener" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="14" y="22" width="36" height="24" rx="5" fill="#8E9BF0"></rect>
+        <circle cx="26" cy="34" r="5" fill="#3B3B3B" stroke="none"></circle>
+        <rect x="34" y="31" width="11" height="6" rx="2" fill="#B8B8B8"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-marker" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="24" y="18" width="16" height="34" rx="6" fill="#52C9A0"></rect>
+        <rect x="24" y="8" width="16" height="12" rx="5" fill="#2D8B6A"></rect>
+        <polygon points="28,52 36,52 32,58" fill="#2D8B6A"></polygon>
+      </g>
+    </symbol>
+
+    <symbol id="icon-computer" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="8" y="10" width="48" height="32" rx="4" fill="#8E9BF0"></rect>
+        <rect x="13" y="15" width="38" height="22" rx="2" fill="#BFE6FF"></rect>
+        <rect x="27" y="42" width="10" height="8" fill="#B8B8B8"></rect>
+        <rect x="19" y="50" width="26" height="4" rx="2" fill="#B8B8B8"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-lamp" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <polygon points="16,32 48,32 40,14 24,14" fill="#F9DC5C"></polygon>
+        <line x1="32" y1="32" x2="32" y2="52"></line>
+        <rect x="20" y="52" width="24" height="4" rx="2" fill="#B8B8B8"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-trashbin" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="18" y="20" width="28" height="34" rx="4" fill="#6BB8F0"></rect>
+        <rect x="14" y="14" width="36" height="6" rx="3" fill="#4A90C2"></rect>
+        <rect x="26" y="9" width="12" height="5" rx="2" fill="#4A90C2"></rect>
+        <line x1="26" y1="28" x2="26" y2="46" stroke="#FFFFFF" stroke-width="2"></line>
+        <line x1="32" y1="28" x2="32" y2="46" stroke="#FFFFFF" stroke-width="2"></line>
+        <line x1="38" y1="28" x2="38" y2="46" stroke="#FFFFFF" stroke-width="2"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-waterbottle" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="24" y="20" width="16" height="34" rx="6" fill="#52C9A0"></rect>
+        <rect x="27" y="10" width="10" height="8" rx="2" fill="#2D8B6A"></rect>
+        <rect x="28" y="16" width="8" height="5" fill="#52C9A0"></rect>
+        <rect x="27" y="30" width="10" height="10" rx="2" fill="#FFFFFF"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-lunchbox" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="10" y="24" width="44" height="26" rx="6" fill="#E8505B"></rect>
+        <path d="M24 24 Q32 12 40 24" fill="none"></path>
+        <rect x="29" y="33" width="6" height="8" rx="1" fill="#FFFFFF"></rect>
+      </g>
+    </symbol>
+
+    <symbol id="icon-umbrella" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M8 30 Q32 6 56 30 Z" fill="#E8505B"></path>
+        <line x1="32" y1="30" x2="32" y2="52"></line>
+        <path d="M32 52 Q32 58 26 58" fill="none"></path>
+      </g>
+    </symbol>
+
+    <symbol id="icon-ball" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <circle cx="32" cy="32" r="24" fill="#6BB8F0"></circle>
+        <path d="M10 22 Q32 34 54 22" fill="none" stroke="#FFFFFF" stroke-width="3"></path>
+        <path d="M10 42 Q32 30 54 42" fill="none" stroke="#FFFFFF" stroke-width="3"></path>
+        <line x1="32" y1="8" x2="32" y2="56" stroke="#FFFFFF" stroke-width="3"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-plant" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <polygon points="20,44 44,44 40,58 24,58" fill="#F8B26A"></polygon>
+        <line x1="32" y1="44" x2="32" y2="26"></line>
+        <path d="M32 34 Q18 32 16 18 Q30 20 32 34 Z" fill="#52C9A0"></path>
+        <path d="M32 30 Q46 28 48 14 Q34 16 32 30 Z" fill="#52C9A0"></path>
+      </g>
+    </symbol>
+
+    <symbol id="icon-calendar" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="10" y="14" width="44" height="40" rx="4" fill="#FFFFFF"></rect>
+        <rect x="10" y="14" width="44" height="10" rx="4" fill="#E8505B"></rect>
+        <line x1="22" y1="8" x2="22" y2="18"></line>
+        <line x1="42" y1="8" x2="42" y2="18"></line>
+        <line x1="16" y1="32" x2="48" y2="32" stroke="#D9D9D9" stroke-width="2"></line>
+        <line x1="16" y1="42" x2="48" y2="42" stroke="#D9D9D9" stroke-width="2"></line>
+        <line x1="24" y1="38" x2="24" y2="50" stroke="#D9D9D9" stroke-width="2"></line>
+        <line x1="40" y1="38" x2="40" y2="50" stroke="#D9D9D9" stroke-width="2"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-folder" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M8 18 H26 L31 24 H56 V52 H8 Z" fill="#F8B26A"></path>
+        <line x1="8" y1="28" x2="56" y2="28" stroke="#E0A800" stroke-width="2"></line>
+      </g>
+    </symbol>
+
+    <symbol id="icon-headphones" viewBox="0 0 64 64">
+      <g stroke="#3B3B3B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M12 36 Q12 12 32 12 Q52 12 52 36" fill="none"></path>
+        <rect x="8" y="32" width="11" height="20" rx="5" fill="#8E9BF0"></rect>
+        <rect x="45" y="32" width="11" height="20" rx="5" fill="#8E9BF0"></rect>
+      </g>
+    </symbol>
+  </svg>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
